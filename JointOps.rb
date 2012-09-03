@@ -48,6 +48,7 @@ scrolltb.add( textbox )
 # linked to the message box text buffer
 chat = Gtk::TextView.new
 chat.wrap_mode = Gtk::TextTag::WRAP_WORD
+chat.editable = false
 scrollch = Gtk::ScrolledWindow.new
 scrollch.add( chat )
 #

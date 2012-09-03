@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'etc'
 require 'net/http'
 require 'gtk2'
 
@@ -46,6 +47,11 @@ scrolltb.add( textbox )
 # editable should be false
 # should have it's text buffer 
 # linked to the message box text buffer
+# top section is to determine the username of the user
+# and then use that as a username for the chat...
+# comment the raise to allow the script to be run as root
+$username = Etc.getlogin
+raise 'Must not run as root' unless Process.uid != 0
 chat = Gtk::TextView.new
 chat.wrap_mode = Gtk::TextTag::WRAP_WORD
 chat.editable = false
@@ -60,7 +66,7 @@ message = Gtk::Entry.new
 send = Gtk::Button.new( 'Send' )
 # some function to add the text in the message box
 # into the textbox
-
+userlbl = Gtk::Label.new ( $username )
 
 # containers
 vbox0 = Gtk::VBox.new( false, 5 )
@@ -79,6 +85,7 @@ hbox1 = Gtk::HBox.new( false, 0 )
 
 hbox0.pack_start( scrolltb, true, true, 0 )
 hbox0.pack_start( scrollch, true, true, 0 )
+hbox1.pack_start( userlbl, false, false, 0 )
 hbox1.pack_start( message, true, true, 0 )
 hbox1.pack_start( send, false, false, 0 )
 

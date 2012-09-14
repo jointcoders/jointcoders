@@ -3,7 +3,24 @@
 require 'etc'
 require 'net/http'
 require 'gtk2'
+require 'socket'
 
+
+
+
+# Since this application is going to begin with
+# a client-server relationship, I figure it would
+# be useful to have the local IP made readily available
+def local_ip
+  orig = Socket.do_not_reverse_lookup  
+  Socket.do_not_reverse_lookup =true # turn off reverse DNS resolution temporarily
+  UDPSocket.open do |s|
+    s.connect '64.233.187.99', 1 #google
+    s.addr.last
+  end
+ensure
+  Socket.do_not_reverse_lookup = orig
+end
 
 # program should have a window both users can edit(main project)
 # program should have chat window
@@ -28,8 +45,12 @@ file_menu = Gtk::Menu.new
 menu_file = Gtk::MenuItem.new( '_File' )
   menu_file.set_submenu( file_menu )
 
+menu_ip = Gtk::MenuItem.new( local_ip )
+  menu_ip.right_justified = true
+
 menu_bar = Gtk::MenuBar.new
   menu_bar.add( menu_file )
+  menu_bar.add( menu_ip )
 
 
 #
@@ -47,6 +68,8 @@ scrolltb.add( textbox )
 # editable should be false
 # should have it's text buffer 
 # linked to the message box text buffer
+# method should be in place to clear the text and send the value
+# of it to both users' screens
 # top section is to determine the username of the user
 # and then use that as a username for the chat...
 # comment the raise to allow the script to be run as root

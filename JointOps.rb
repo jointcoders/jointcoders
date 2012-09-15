@@ -21,7 +21,6 @@ def local_ip
     end
     rescue Errno::ENETUNREACH
       return "No network connection"
-    #end
     ensure
       Socket.do_not_reverse_lookup = orig
   end

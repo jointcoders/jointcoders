@@ -14,12 +14,17 @@ require 'socket'
 def local_ip
   orig = Socket.do_not_reverse_lookup  
   Socket.do_not_reverse_lookup =true # turn off reverse DNS resolution temporarily
-  UDPSocket.open do |s|
-    s.connect '64.233.187.99', 1 #google
-    s.addr.last
+  begin #make sure lack of internet connection doesn't kill the script
+    UDPSocket.open do |s|
+      s.connect '64.233.187.99', 1 #google
+      s.addr.last
+    end
+    rescue Errno::ENETUNREACH
+      return "No network connection"
+    #end
+    ensure
+      Socket.do_not_reverse_lookup = orig
   end
-ensure
-  Socket.do_not_reverse_lookup = orig
 end
 
 # program should have a window both users can edit(main project)

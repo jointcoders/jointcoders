@@ -138,12 +138,16 @@ I figure it would be useful to have the local IP made readily available</p>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">local_ip</span>
   <span class="ruby-identifier">orig</span> = <span class="ruby-constant">Socket</span>.<span class="ruby-identifier">do_not_reverse_lookup</span>  
   <span class="ruby-constant">Socket</span>.<span class="ruby-identifier">do_not_reverse_lookup</span> =<span class="ruby-keyword">true</span> <span class="ruby-comment"># turn off reverse DNS resolution temporarily</span>
-  <span class="ruby-constant">UDPSocket</span>.<span class="ruby-identifier">open</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">s</span>.<span class="ruby-identifier">connect</span> <span class="ruby-string">'64.233.187.99'</span>, <span class="ruby-value">1</span> <span class="ruby-comment">#google</span>
-    <span class="ruby-identifier">s</span>.<span class="ruby-identifier">addr</span>.<span class="ruby-identifier">last</span>
+  <span class="ruby-keyword">begin</span> <span class="ruby-comment">#make sure lack of internet connection doesn't kill the script</span>
+    <span class="ruby-constant">UDPSocket</span>.<span class="ruby-identifier">open</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">s</span>.<span class="ruby-identifier">connect</span> <span class="ruby-string">'64.233.187.99'</span>, <span class="ruby-value">1</span> <span class="ruby-comment">#google</span>
+      <span class="ruby-identifier">s</span>.<span class="ruby-identifier">addr</span>.<span class="ruby-identifier">last</span>
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">ENETUNREACH</span> <span class="ruby-comment">#If you can't route to google, it will return this</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;No network connection&quot;</span>
+    <span class="ruby-keyword">ensure</span>
+      <span class="ruby-constant">Socket</span>.<span class="ruby-identifier">do_not_reverse_lookup</span> = <span class="ruby-identifier">orig</span>
   <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">ensure</span>
-  <span class="ruby-constant">Socket</span>.<span class="ruby-identifier">do_not_reverse_lookup</span> = <span class="ruby-identifier">orig</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- local_ip-source -->
           

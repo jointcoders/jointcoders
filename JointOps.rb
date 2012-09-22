@@ -19,7 +19,7 @@ def local_ip
       s.connect '64.233.187.99', 1 #google
       s.addr.last
     end
-    rescue Errno::ENETUNREACH
+    rescue Errno::ENETUNREACH #If you can't route to google, it will return this
       return "No network connection"
     ensure
       Socket.do_not_reverse_lookup = orig

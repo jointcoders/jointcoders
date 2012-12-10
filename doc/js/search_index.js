@@ -1,0 +1,1 @@
+var search_data = {"index":{"searchIndex":["object","local_ip()"],"longSearchIndex":["object","object#local_ip()"],"info":[["Object","","Object.html","",""],["local_ip","Object","Object.html#method-i-local_ip","()","<p>Since this application is going to begin with a client-server relationship,\nI figure it would be useful …\n"]]}}

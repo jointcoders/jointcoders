@@ -5,8 +5,31 @@ require 'net/http'
 require 'gtk2'
 require 'socket'
 
+$connected = 0
+
+#
+# As a start, we should be able to choose
+# the role of client or server, so with that
+# we need to specify a port to listen to or to connect
+# to and we should mention somewhere in the program that
+# you are or aren't connected to anyone and if you are
+# then to whom, and maybe build an address book like thing
+# so you can store a few users and/or locations to connect to
+
+def server_start (listen_port=2000)
+  server = TCPServer.open(listen_port)
 
 
+  client = server.accept # wait for the client to connect
+    $connected = 1
+  client.close # disconnect from client
+    $connected = 0
+
+
+# Not sure how to write it yet, but need to put in a way to communicate
+# back here that you are connected, $connected = 1, or disconnected, $connect = 0
+# and to do something to secure the connection by some means
+end
 
 # Since this application is going to begin with
 # a client-server relationship, I figure it would

@@ -49,12 +49,33 @@ def local_ip
   end
 end
 
+#
+# Method to allow connecting to another machine
+#
+# (as of now still very broken)
+
+def client_connect (listen_port=2000)
+  connect_window = Gtk::Window.new( "Connect to Client Machine to iniatate Joint Ops" )
+  connect_window.set_size_request( 400, 200 )
+
+  # containers
+  connect_vbox0 = Gtk::VBox.new( false, 5 )
+  connect_hbox0 = Gtk::HBox.new( false, 0 )
+
+  connect_vbox0.pack_start( connect_hbox0, false, false, 0 )
+
+  connect_window.add( connect_vbox0 )
+  
+  connect_window.show_all
+  puts "client_connect script being called"
+end
+
 # program should have a window both users can edit(main project)
 # program should have chat window
 # program should text box
 
 # might want to append current file name to window title
-#long variable name can be changed
+# long variable name can be changed
 currentsourcecode = 'Test.txt'
 
 def insert_text(ent, txtvu)
@@ -79,11 +100,17 @@ window.signal_connect( 'destroy') {
 # Menu
 #
 file_menu = Gtk::Menu.new
+  file_connect = Gtk::MenuItem.new( 'Connect' )  #{ client_connect } putting this here didn't work, don't know why
+    file_connect.signal_connect "activate" do
+      client_connect
+      puts "connect script finished"
+    end
+  file_listen = Gtk::MenuItem.new( 'Listen' )
   file_open = Gtk::MenuItem.new( 'Open' )
   file_save = Gtk::MenuItem.new( 'Save' )
   file_exit = Gtk::MenuItem.new( 'Exit' )
   file_exit.signal_connect( 'activate' ) { Gtk.main_quit }
-  file_menu.add( file_open ).add( file_save ).add( file_exit )
+  file_menu.add( file_connect ).add( file_listen ).add( file_open ).add( file_save ).add( file_exit )
   
 menu_file = Gtk::MenuItem.new( '_File' )
   menu_file.set_submenu( file_menu )
@@ -124,6 +151,7 @@ chat.editable = false
 chat.cursor_visible = false
 scrollch = Gtk::ScrolledWindow.new
 scrollch.add( chat )
+
 #
 # Text Box for Chat Window
 #
@@ -139,6 +167,7 @@ message.signal_connect( 'key-press-event' ) { |w,e|
   
   end
 }
+
 #
 # Text Box send button
 send = Gtk::Button.new( 'Send' )

@@ -107,6 +107,9 @@ file_menu = Gtk::Menu.new
     end
   file_listen = Gtk::MenuItem.new( 'Listen' )
   file_open = Gtk::MenuItem.new( 'Open' )
+    file_open.signal_connect "activate" do
+      open_dialog
+    end
   file_save = Gtk::MenuItem.new( 'Save' )
   file_exit = Gtk::MenuItem.new( 'Exit' )
   file_exit.signal_connect( 'activate' ) { Gtk.main_quit }
@@ -121,6 +124,53 @@ menu_ip = Gtk::MenuItem.new( local_ip )
 menu_bar = Gtk::MenuBar.new
   menu_bar.add( menu_file )
   menu_bar.add( menu_ip )
+
+#
+# Open Dialog
+# Dialog box will allow filtering of file
+# by type, take the file chosen and load it
+# into the Main Code Box.
+
+def open_dialog
+
+  dialog =  Gtk::FileChooserDialog.new( "Gtk::FileChooser sample", nil,
+                                         Gtk::FileChooser::ACTION_OPEN,
+                                         "gnome-vfs",
+                                         [Gtk::Stock::OPEN, Gtk::Dialog::RESPONSE_ACCEPT],
+                                         [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL]
+                                       )
+  filter_all = Gtk::FileFilter.new
+  filter_all.name = "*.*"
+  filter_all.add_pattern("*.*")
+  dialog.add_filter(filter_all)
+
+  filter_c = Gtk::FileFilter.new
+  filter_c.name = "C sources"
+  filter_c.add_pattern("*.[c|h]")
+  dialog.add_filter(filter_c)
+
+  filter_rb = Gtk::FileFilter.new
+  filter_rb.name = "Ruby Scripts"
+  filter_rb.add_pattern("*.rb")
+  filter_rb.add_pattern("*.rbw")
+  dialog.add_filter(filter_rb)
+
+  dialog.add_shortcut_folder("/tmp")
+
+  if dialog.run == Gtk::Dialog::RESPONSE_ACCEPT
+    #puts "filename = #{dialog.filename}"
+    #puts "uri = #{dialog.uri}"
+    file_name = dialog.filename
+    file_content = IO.readlines(file_name)
+    puts file_content
+    #textbox.buffer.text = file_content.to_s
+  end
+
+  if dialog.run == Gtk::Dialog::RESPONSE_CANCEL
+    dialog.destroy
+  end
+
+end
 
 
 #

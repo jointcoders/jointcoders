@@ -161,9 +161,9 @@ def open_dialog
     #puts "filename = #{dialog.filename}"
     #puts "uri = #{dialog.uri}"
     file_name = dialog.filename
-    file_content = IO.readlines(file_name)
+    file_content = IO.readlines(file_name).to_s
     puts file_content
-    #textbox.buffer.text = file_content.to_s
+    $textbox.buffer.text = file_content
   end
 
   if dialog.run == Gtk::Dialog::RESPONSE_CANCEL
@@ -178,10 +178,10 @@ end
 # needs to be linked to some type of variable
 # should be able to be edited by both users
 # in real time
-textbox = Gtk::TextView.new
-textbox.wrap_mode = Gtk::TextTag::WRAP_WORD
+$textbox = Gtk::TextView.new
+$textbox.wrap_mode = Gtk::TextTag::WRAP_WORD
 scrolltb = Gtk::ScrolledWindow.new
-scrolltb.add( textbox )
+scrolltb.add( $textbox )
 
 #
 # Chat Window

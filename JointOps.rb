@@ -5,6 +5,8 @@ require 'net/http'
 require 'gtk2'
 require 'socket'
 
+require_relative 'classes/projects'
+
 $connected = 0
 
 #

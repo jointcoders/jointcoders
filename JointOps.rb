@@ -2,8 +2,9 @@
 
 require 'etc'
 require 'net/http'
-require 'gtk2'
 require 'socket'
+#gem 'qtbindings'
+require 'Qt4'
 
 require_relative 'classes/projects'
 
@@ -57,7 +58,8 @@ end
 # (as of now still very broken)
 
 def client_connect (listen_port=2000)
-  connect_window = Gtk::Window.new( "Connect to Client Machine to iniatate Joint Ops" )
+  connect_window = 
+#  connect_window = Gtk::Window.new( "Connect to Client Machine to iniatate Joint Ops" )
   connect_window.set_size_request( 400, 200 )
 
   # containers
@@ -80,52 +82,72 @@ end
 # long variable name can be changed
 currentsourcecode = 'Test.txt'
 
-def insert_text(ent, txtvu)
-  mark = txtvu.buffer.selection_bound
-  iter = txtvu.buffer.get_iter_at_mark(mark)
-  txtvu.buffer.insert(iter, "#{$username.capitalize}: " )
-  txtvu.buffer.insert(iter, ent.text )
+#def insert_text(ent, txtvu)
+#  mark = txtvu.buffer.selection_bound
+#  iter = txtvu.buffer.get_iter_at_mark(mark)
+#  txtvu.buffer.insert(iter, "#{$username.capitalize}: " )
+#  txtvu.buffer.insert(iter, ent.text )
 # return chr
-  txtvu.buffer.insert(iter, 10.chr )
+#  txtvu.buffer.insert(iter, 10.chr )
 #   ent
-  ent.text = ''
+#  ent.text = ''
+#end
+
+class QtApp < Qt::Widget
+
+    def initialize
+        super
+        
+        setWindowTitle ("Joint Ops ")##{currentsourcecode}")
+
+        setToolTip "This is Qt::Widget"
+        
+        resize 250, 150
+        move 300, 300
+
+        show
+    end
 end
 
-Gtk.init
-window = Gtk::Window.new( "Joint Ops #{currentsourcecode}" )
-window.set_size_request( 600, 400 )
-window.signal_connect( 'destroy') {
-  Gtk.main_quit
-}
+app = Qt::Application.new ARGV
+QtApp.new
+app.exec
+
+#Gtk.init
+#window = Gtk::Window.new( "Joint Ops #{currentsourcecode}" )
+#window.set_size_request( 600, 400 )
+#window.signal_connect( 'destroy') {
+#  Gtk.main_quit
+#}
 
 #
 # Menu
 #
-file_menu = Gtk::Menu.new
-  file_connect = Gtk::MenuItem.new( 'Connect' )  #{ client_connect } putting this here didn't work, don't know why
-    file_connect.signal_connect "activate" do
-      client_connect
-      puts "connect script finished"
-    end
-  file_listen = Gtk::MenuItem.new( 'Listen' )
-  file_open = Gtk::MenuItem.new( 'Open' )
-    file_open.signal_connect "activate" do
-      open_dialog
-    end
-  file_save = Gtk::MenuItem.new( 'Save' )
-  file_exit = Gtk::MenuItem.new( 'Exit' )
-  file_exit.signal_connect( 'activate' ) { Gtk.main_quit }
-  file_menu.add( file_connect ).add( file_listen ).add( file_open ).add( file_save ).add( file_exit )
-  
-menu_file = Gtk::MenuItem.new( '_File' )
-  menu_file.set_submenu( file_menu )
-
-menu_ip = Gtk::MenuItem.new( local_ip )
-  menu_ip.right_justified = true
-
-menu_bar = Gtk::MenuBar.new
-  menu_bar.add( menu_file )
-  menu_bar.add( menu_ip )
+#file_menu = Gtk::Menu.new
+#  file_connect = Gtk::MenuItem.new( 'Connect' )  #{ client_connect } putting this here didn't work, don't know why
+#    file_connect.signal_connect "activate" do
+#      client_connect
+#      puts "connect script finished"
+#    end
+#  file_listen = Gtk::MenuItem.new( 'Listen' )
+#  file_open = Gtk::MenuItem.new( 'Open' )
+#    file_open.signal_connect "activate" do
+#      open_dialog
+#    end
+#  file_save = Gtk::MenuItem.new( 'Save' )
+#  file_exit = Gtk::MenuItem.new( 'Exit' )
+#  file_exit.signal_connect( 'activate' ) { Gtk.main_quit }
+#  file_menu.add( file_connect ).add( file_listen ).add( file_open ).add( file_save ).add( file_exit )
+#  
+#menu_file = Gtk::MenuItem.new( '_File' )
+#  menu_file.set_submenu( file_menu )
+#
+#menu_ip = Gtk::MenuItem.new( local_ip )
+#  menu_ip.right_justified = true
+#
+#menu_bar = Gtk::MenuBar.new
+#  menu_bar.add( menu_file )
+#  menu_bar.add( menu_ip )
 
 #
 # Open Dialog
@@ -133,46 +155,46 @@ menu_bar = Gtk::MenuBar.new
 # by type, take the file chosen and load it
 # into the Main Code Box.
 
-def open_dialog
-
-  dialog =  Gtk::FileChooserDialog.new( "Gtk::FileChooser sample", nil,
-                                         Gtk::FileChooser::ACTION_OPEN,
-                                         "gnome-vfs",
-                                         [Gtk::Stock::OPEN, Gtk::Dialog::RESPONSE_ACCEPT],
-                                         [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL]
-                                       )
-  filter_all = Gtk::FileFilter.new
-  filter_all.name = "*.*"
-  filter_all.add_pattern("*.*")
-  dialog.add_filter(filter_all)
-
-  filter_c = Gtk::FileFilter.new
-  filter_c.name = "C sources"
-  filter_c.add_pattern("*.[c|h]")
-  dialog.add_filter(filter_c)
-
-  filter_rb = Gtk::FileFilter.new
-  filter_rb.name = "Ruby Scripts"
-  filter_rb.add_pattern("*.rb")
-  filter_rb.add_pattern("*.rbw")
-  dialog.add_filter(filter_rb)
-
-  dialog.add_shortcut_folder("/tmp")
-
-  if dialog.run == Gtk::Dialog::RESPONSE_ACCEPT
-    #puts "filename = #{dialog.filename}"
-    #puts "uri = #{dialog.uri}"
-    file_name = dialog.filename
-    file_content = IO.readlines(file_name).to_s
-    puts file_content
-    $textbox.buffer.text = file_content
-  end
-
-  if dialog.run == Gtk::Dialog::RESPONSE_CANCEL
-    dialog.destroy
-  end
-
-end
+#def open_dialog
+#
+#  dialog =  Gtk::FileChooserDialog.new( "Gtk::FileChooser sample", nil,
+#                                         Gtk::FileChooser::ACTION_OPEN,
+#                                         "gnome-vfs",
+#                                         [Gtk::Stock::OPEN, Gtk::Dialog::RESPONSE_ACCEPT],
+#                                         [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL]
+#                                       )
+#  filter_all = Gtk::FileFilter.new
+#  filter_all.name = "*.*"
+#  filter_all.add_pattern("*.*")
+#  dialog.add_filter(filter_all)
+#
+#  filter_c = Gtk::FileFilter.new
+#  filter_c.name = "C sources"
+#  filter_c.add_pattern("*.[c|h]")
+#  dialog.add_filter(filter_c)
+#
+#  filter_rb = Gtk::FileFilter.new
+#  filter_rb.name = "Ruby Scripts"
+#  filter_rb.add_pattern("*.rb")
+#  filter_rb.add_pattern("*.rbw")
+#  dialog.add_filter(filter_rb)
+#
+#  dialog.add_shortcut_folder("/tmp")
+#
+#  if dialog.run == Gtk::Dialog::RESPONSE_ACCEPT
+#    #puts "filename = #{dialog.filename}"
+#    #puts "uri = #{dialog.uri}"
+#    file_name = dialog.filename
+#    file_content = IO.readlines(file_name).to_s
+#    puts file_content
+#    $textbox.buffer.text = file_content
+#  end
+#
+#  if dialog.run == Gtk::Dialog::RESPONSE_CANCEL
+#    dialog.destroy
+#  end
+#
+#end
 
 
 #

@@ -80,7 +80,7 @@ end
 
 # might want to append current file name to window title
 # long variable name can be changed
-currentsourcecode = 'Test.txt'
+$currentsourcecode = 'Test.txt'
 
 #def insert_text(ent, txtvu)
 #  mark = txtvu.buffer.selection_bound
@@ -93,32 +93,90 @@ currentsourcecode = 'Test.txt'
 #  ent.text = ''
 #end
 
-class QtApp < Qt::Widget
+#class QtApp < Qt::Widget
+#class Main_Window < Qt::Widget
+class Main_Window < Qt::MainWindow
 
-    def initialize
-        super
+  def initialize
+    super
         
-        setWindowTitle ("Joint Ops ")##{currentsourcecode}")
+    setWindowTitle ("Joint Ops #{$currentsourcecode}")
 
-        setToolTip "This is Qt::Widget"
+    setToolTip "This is Qt::Widget"
+       
+    init_ui
+  
+    resize 250, 150
+    move 300, 300
+
+    show
+  end
+
+ def init_ui
+
+    newpix = Qt::Icon.new "new.png"
+    openpix = Qt::Icon.new "open.png"
+    savepix = Qt::Icon.new "save.png"
+    quitpix = Qt::Icon.new "exit.png"
+
+    newa = Qt::Action.new newpix, "&New", self
+    newa.setShortcut "Ctrl+N"
+    open = Qt::Action.new openpix, "&Open", self
+    open.setShortcut "Ctrl+O"
+    save = Qt::Action.new savepix, "&Save", self
+    save.setShortcut "Ctrl+S"
+    quit = Qt::Action.new quitpix, "&Quit", self
+    quit.setShortcut "Ctrl+Q"
+       
+    file = menuBar().addMenu "&File"
+    file.addAction newa
+    file.addAction open
+    file.addAction save
+    file.addSeparator
+    file.addAction quit
+
+    connect(quit, SIGNAL("triggered()"), 
+      Qt::Application.instance, SLOT("quit()"))
+
+    #vbox = Qt::VBoxLayout.new self
+    #vbox = Qt::QBoxLayout.new self
+
+    #vbox1 = Qt::VBoxLayout.new
+    #hbox1 = Qt::HBoxLayout.new
+    #hbox2 = Qt::HBoxLayout.new
+
+    #windLabel = Qt::Label.new "Windows", self
+    #edit = Qt::TextEdit.new self
+    #edit.setEnabled true
+
+    #activate = Qt::PushButton.new "Activate", self
+    #close = Qt::PushButton.new "Close", self
+    #help = Qt::PushButton.new "Help", self
+    #ok = Qt::PushButton.new "OK", self
+
+    #vbox.addWidget windLabel
+
+    #vbox1.addWidget activate
+    #vbox1.addWidget close, 0, Qt::AlignTop
+    #hbox1.addWidget edit
+    #hbox1.addLayout vbox1
+
+    #vbox.addLayout hbox1
+
+    #hbox2.addWidget help
+    #hbox2.addStretch 1
+    #hbox2.addWidget ok
         
-        resize 250, 150
-        move 300, 300
+    #vbox.addLayout hbox2, 1
+    #setLayout vbox
 
-        show
-    end
+  end   
 end
 
 app = Qt::Application.new ARGV
-QtApp.new
+#QtApp.new
+Main_Window.new
 app.exec
-
-#Gtk.init
-#window = Gtk::Window.new( "Joint Ops #{currentsourcecode}" )
-#window.set_size_request( 600, 400 )
-#window.signal_connect( 'destroy') {
-#  Gtk.main_quit
-#}
 
 #
 # Menu
@@ -202,10 +260,12 @@ app.exec
 # needs to be linked to some type of variable
 # should be able to be edited by both users
 # in real time
-$textbox = Gtk::TextView.new
-$textbox.wrap_mode = Gtk::TextTag::WRAP_WORD
-scrolltb = Gtk::ScrolledWindow.new
-scrolltb.add( $textbox )
+#$textbox = Qt::TextEdit.new
+#$textbox = Gtk::TextView.new
+#$textbox.wrap_mode = Gtk::TextTag::WRAP_WORD
+#scrolltb = Qt::AbstractScrollArea.new
+#scrolltb = Gtk::ScrolledWindow.new
+#scrolltb.add( $textbox )
 
 #
 # Chat Window
@@ -219,47 +279,48 @@ scrolltb.add( $textbox )
 # comment the raise to allow the script to be run as root
 $username = Etc.getlogin
 raise 'Must not run as root' unless Process.uid != 0
-chat = Gtk::TextView.new
-chat.wrap_mode = Gtk::TextTag::WRAP_WORD
-chat.editable = false
-chat.cursor_visible = false
-scrollch = Gtk::ScrolledWindow.new
-scrollch.add( chat )
+#chat = Gtk::TextView.new
+#chat.wrap_mode = Gtk::TextTag::WRAP_WORD
+#chat.editable = false
+#chat.cursor_visible = false
+#scrollch = Gtk::ScrolledWindow.new
+#scrollch.add( chat )
 
 #
 # Text Box for Chat Window
 #
-message = Gtk::Entry.new
+#message = Qt::LineEdit.new
+#message = Gtk::Entry.new
 # get message to accept keypress
-window.add_events( Gdk::Event::KEY_PRESS )
-message.signal_connect( 'key-press-event' ) { |w,e|
-  if ( message.text =~ /[a-zA-Z0-9]+/ ) then
-    if ( e.keyval == 65293 ) || ( e.keyval == 65421 ) then
-      insert_text( message, chat )
-    end
-  else
-  
-  end
-}
+#window.add_events( Gdk::Event::KEY_PRESS )
+#message.signal_connect( 'key-press-event' ) { |w,e|
+#  if ( message.text =~ /[a-zA-Z0-9]+/ ) then
+#    if ( e.keyval == 65293 ) || ( e.keyval == 65421 ) then
+#      insert_text( message, chat )
+#    end
+#  else
+#  
+#  end
+#}
 
 #
 # Text Box send button
-send = Gtk::Button.new( 'Send' )
-send.signal_connect( 'clicked' ) {
-  if ( message.text =~ /[a-zA-Z0-9]+/ ) then
-    insert_text( message, chat )
-  else
-    
-  end
-}
+#send = Gtk::Button.new( 'Send' )
+#send.signal_connect( 'clicked' ) {
+#  if ( message.text =~ /[a-zA-Z0-9]+/ ) then
+#    insert_text( message, chat )
+#  else
+#    
+#  end
+#}
 # some function to add the text in the message box
 # into the textbox
-userlbl = Gtk::Label.new ( $username )
+#userlbl = Gtk::Label.new ( $username )
 
 # containers
-vbox0 = Gtk::VBox.new( false, 5 )
-hbox0 = Gtk::HBox.new( false, 0 )
-hbox1 = Gtk::HBox.new( false, 0 )
+#vbox0 = Gtk::VBox.new( false, 5 )
+#hbox0 = Gtk::HBox.new( false, 0 )
+#hbox1 = Gtk::HBox.new( false, 0 )
 
 # should control the size of the code and chat windows
 # should make the code window 3/4 of give space
@@ -269,22 +330,22 @@ hbox1 = Gtk::HBox.new( false, 0 )
 
 # packing
 # size0.add( hbox0 )
-table = Gtk::Table.new( 4, 4, true )
-table.attach_defaults( scrolltb, 0, 3, 0, 4 )
-table.attach_defaults( scrollch, 3, 4, 0, 4 )
+#table = Gtk::Table.new( 4, 4, true )
+#table.attach_defaults( scrolltb, 0, 3, 0, 4 )
+#table.attach_defaults( scrollch, 3, 4, 0, 4 )
 
-hbox1.pack_start( userlbl, false, false, 0 )
-hbox1.pack_start( message, true, true, 0 )
-hbox1.pack_start( send, false, false, 0 )
-
-vbox0.pack_start( menu_bar, false, false, 0 )
-vbox0.pack_start( table, true, true, 0 )
-
-vbox0.pack_start( hbox1, false, false, 0 )
-
-window.add( vbox0 )
+#hbox1.pack_start( userlbl, false, false, 0 )
+#hbox1.pack_start( message, true, true, 0 )
+#hbox1.pack_start( send, false, false, 0 )
+#
+#vbox0.pack_start( menu_bar, false, false, 0 )
+#vbox0.pack_start( table, true, true, 0 )
+#
+#vbox0.pack_start( hbox1, false, false, 0 )
+#
+#window.add( vbox0 )
 
 # show it all
-window.show_all
+#window.show_all
 
-Gtk.main
+#Gtk.main

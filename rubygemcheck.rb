@@ -15,10 +15,9 @@ required_gems.each do |testgem|
     # with requirements
     #gem "qtbindings", ">=4.0"
     puts "Gem #{testgem} is installed.....\033[32mOK\033[0m"
-  rescue Gem::LoadError, NameError => reason
+  rescue Gem::LoadError
     # not instailled
     puts "Gem #{testgem} is installed.....\033[31mFAIL\033[0m"
-    #missing_gems.push "#{testgem}\n"
     missing_gems.push testgem
   end
 end
